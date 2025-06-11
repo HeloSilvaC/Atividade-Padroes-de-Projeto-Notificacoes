@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade Prática: Sistema de Notificações</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            font-size: 2.2em;
+        }
+
+        .author-info {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            background-color: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Atividade Prática: Sistema de Notificações com Padrões de Projeto</h1>
+        <div class="author-info">
+            <p><strong>Autor:</strong> Heloísa da Silva Contrera<br>
+                <strong>Repositório Git:</strong> <a href="https://github.com/HeloSilvaC/Atividade-Padroes-de-Projeto-Notificacoes.git" target="_blank">Link para o Projeto no
+                    GitHub</a>
+            </p>
+
+        </div>
+
+        <h2>📝 Descrição da Atividade</h2>
+        <p>
+            Este projeto, desenvolvido como atividade acadêmica, implementa um sistema de envio de notificações flexível
+            e extensível em Java. O objetivo principal é demonstrar a aplicação prática dos padrões de projeto
+            <strong>Strategy</strong>, <strong>Simple Factory</strong> e <strong>Factory Method</strong> para promover a
+            alta coesão, o baixo acoplamento e a manutenibilidade do código.
+        </p>
+
+        <h3>Padrões de Projeto Utilizados:</h3>
+        <ul>
+            <li><strong>Strategy:</strong> Utilizado para encapsular os diferentes algoritmos de envio de notificação
+                (Email, SMS).</li>
+            <li><strong>Simple Factory:</strong> Usado na primeira versão para centralizar e simplificar a criação de
+                objetos de mensagem.</li>
+            <li><strong>Factory Method:</strong> Usado na segunda versão para refatorar a criação de objetos, permitindo
+                que subclasses decidam qual tipo de mensagem instanciar, tornando o sistema mais extensível.</li>
+        </ul>
+
+        <h2>Parte 1: Implementação com Simple Factory e Strategy</h2>
+        <p>A primeira versão do sistema utiliza o padrão <strong>Strategy</strong> para os mecanismos de envio e o
+            padrão <strong>Simple Factory</strong> para a criação das mensagens.</p>
+
+        <h3>Código Fonte: <code>SistemaNotificacaoSimpleFactory.java</code></h3>
+        <pre><code class="language-java">
+// -----------------------------------------------------------------
+// PARTE 1: IMPLEMENTAÇÃO COM SIMPLE FACTORY E STRATEGY
+// -----------------------------------------------------------------
+
+/**
+ * Strategy Interface: Define a interface para os algoritmos de envio.
+ */
+interface NotificationStrategy {
+    void send(Message message, String recipient);
+}
+
+/**
+ * Concrete Strategy 1: Implementa o envio de notificação por Email.
+ */
+class EmailNotificationStrategy implements NotificationStrategy {
+    @Override
+    public void send(Message message, String recipient) {
+        System.out.println("Enviando Email para: " + recipient);
+        System.out.println("Mensagem: " + message.format());
+        System.out.println("Email enviado com sucesso.\n");
+    }
+}
+
+/**
+ * Concrete Strategy 2: Implementa o envio de notificação por SMS.
+ */
+class SMSNotificationStrategy implements NotificationStrategy {
+    @Override
+    public void send(Message message, String recipient) {
+        System.out.println("Enviando SMS para: " + recipient);
+        System.out.println("Mensagem: " + message.format());
+        System.out.println("SMS enviado com sucesso.\n");
+    }
+}
+
+/**
+ * Abstract Product: Classe base para os diferentes tipos de mensagem.
+ */
+abstract class Message {
+    protected String content;
+
+    public Message(String content) {
+        this.content = content;
+    }
+
+    public abstract String format();
+
+    public String getContent() {
+        return content;
+    }
+}
+
+/**
+ * Concrete Product 1: Mensagem Simples.
+ */
+class SimpleMessage extends Message {
+    public SimpleMessage(String content) {
+        super(content);
+    }
+
+    @Override
+    public String format() {
+        return getContent();
+    }
+}
+
+/**
+ * Concrete Product 2: Mensagem Urgente.
+ */
+class UrgentMessage extends Message {
+    public UrgentMessage(String content) {
+        super(content);
+    }
+
+    @Override
+    public String format() {
+        return "[URGENTE] " + getContent();
+    }
+}
+
+/**
+ * Concrete Product 3: Mensagem Promocional.
+ */
+class PromotionalMessage extends Message {
+    public PromotionalMessage(String content) {
+        super(content);
+    }
+
+    @Override
+    public String format() {
+        return "[PROMOÇÃO] " + getContent() + " Aproveite!";
+    }
+}
+
+
+/**
+ * Simple Factory: Centraliza a criação de objetos de Mensagem.
+ */
+class MessageFactory {
+    public static Message createMessage(String type, String content) {
+        if ("SIMPLE".equalsIgnoreCase(type)) {
+            return new SimpleMessage(content);
+        } else if ("URGENT".equalsIgnoreCase(type)) {
+            return new UrgentMessage(content);
+        } else if ("PROMOTIONAL".equalsIgnoreCase(type)) {
+            return new PromotionalMessage(content);
+        }
+        throw new IllegalArgumentException("Tipo de mensagem desconhecido: " + type);
+    }
+}
+
+/**
+ * Context: Utiliza um objeto Strategy para realizar uma operação.
+ */
+class NotificationService {
+    private NotificationStrategy strategy;
+
+    public NotificationService() {}
+
+    public NotificationService(NotificationStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void setStrategy(NotificationStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void sendNotification(Message message, String recipient) {
+        if (strategy == null) {
+            System.out.println("Erro: Nenhuma estratégia de notificação foi definida.\n");
+            return;
+        }
+        if (message == null) {
+            System.out.println("Erro: Mensagem não pode ser nula.\n");
+            return;
+        }
+        strategy.send(message, recipient);
+    }
+}
+
+
+/**
+ * Client: Utiliza o Contexto e as Estratégias.
+ */
+public class SistemaNotificacaoSimpleFactory {
+    public static void main(String[] args) {
+        Message welcomeMessage = MessageFactory.createMessage("SIMPLE", "Bem-vindo(a) ao nosso sistema!");
+        Message alertMessage = MessageFactory.createMessage("URGENT", "Falha crítica detectada no servidor XYZ.");
+        Message promoMessage = MessageFactory.createMessage("PROMOTIONAL", "Desconto de 20% em todos os produtos.");
+
+        NotificationService notificationService = new NotificationService();
+
+        // --- Teste com a Estratégia de Email ---
+        System.out.println("--- Usando Estratégia de Email ---");
+        notificationService.setStrategy(new EmailNotificationStrategy());
+        notificationService.sendNotification(welcomeMessage, "aluno@exemplo.com");
+        notificationService.sendNotification(alertMessage, "admin@exemplo.com");
+        notificationService.sendNotification(promoMessage, "cliente@exemplo.com");
+
+        // --- Teste com a Estratégia de SMS ---
+        System.out.println("--- Mudando para Estratégia de SMS ---");
+        notificationService.setStrategy(new SMSNotificationStrategy());
+        notificationService.sendNotification(welcomeMessage, "+5511912345678");
+        notificationService.sendNotification(alertMessage, "+5521987654321");
+        notificationService.sendNotification(promoMessage, "+5544998765432");
+    }
+}
+        </code></pre>
+
+        <h2>Parte 2: Refatoração para Factory Method</h2>
+        <p>A segunda parte demonstra a substituição do Simple Factory pelo padrão <strong>Factory Method</strong>. Isso
+            aumenta a flexibilidade, pois a decisão de qual objeto instanciar é delegada para subclasses "Creator", sem
+            a necessidade de um `if/else` centralizado.</p>
+
+        <h3>Código Fonte: <code>SistemaNotificacaoFactoryMethod.java</code></h3>
+        <pre><code class="language-java">
+// -----------------------------------------------------------------
+// PARTE 2: REATORAÇÃO PARA FACTORY METHOD
+// -----------------------------------------------------------------
+
+/**
+ * Creator (Abstrato): Declara o Factory Method, que retorna um objeto do tipo Product.
+ */
+abstract class MessageCreator {
+    public abstract Message createMessage(String content);
+}
+
+/**
+ * Concrete Creator 1: Sobrescreve o Factory Method para retornar um SimpleMessage.
+ */
+class SimpleMessageCreator extends MessageCreator {
+    @Override
+    public Message createMessage(String content) {
+        return new SimpleMessage(content);
+    }
+}
+
+/**
+ * Concrete Creator 2: Sobrescreve o Factory Method para retornar um UrgentMessage.
+ */
+class UrgentMessageCreator extends MessageCreator {
+    @Override
+    public Message createMessage(String content) {
+        return new UrgentMessage(content);
+    }
+}
+
+/**
+ * Concrete Creator 3: Sobrescreve o Factory Method para retornar um PromotionalMessage.
+ */
+class PromotionalMessageCreator extends MessageCreator {
+    @Override
+    public Message createMessage(String content) {
+        return new PromotionalMessage(content);
+    }
+}
+
+/**
+ * Client (Refatorado): Agora usa os Creators para instanciar as mensagens.
+ * As outras classes (Message, NotificationStrategy, NotificationService) permanecem as mesmas.
+ */
+public class SistemaNotificacaoFactoryMethod {
+    public static void main(String[] args) {
+        MessageCreator simpleCreator = new SimpleMessageCreator();
+        MessageCreator urgentCreator = new UrgentMessageCreator();
+        MessageCreator promoCreator = new PromotionalMessageCreator();
+
+        Message welcomeMessage = simpleCreator.createMessage("Bem-vindo(a) ao nosso sistema!");
+        Message alertMessage = urgentCreator.createMessage("Falha crítica detectada no servidor XYZ.");
+        Message promoMessage = promoCreator.createMessage("Desconto de 20% em todos os produtos.");
+
+        NotificationService notificationService = new NotificationService();
+
+        // --- Teste com a Estratégia de Email ---
+        System.out.println("--- [Factory Method] Usando Estratégia de Email ---");
+        notificationService.setStrategy(new EmailNotificationStrategy());
+        notificationService.sendNotification(welcomeMessage, "aluno@exemplo.com");
+        notificationService.sendNotification(alertMessage, "admin@exemplo.com");
+        notificationService.sendNotification(promoMessage, "cliente@exemplo.com");
+
+        // --- Teste com a Estratégia de SMS ---
+        System.out.println("--- [Factory Method] Mudando para Estratégia de SMS ---");
+        notificationService.setStrategy(new SMSNotificationStrategy());
+        notificationService.sendNotification(welcomeMessage, "+5511912345678");
+        notificationService.sendNotification(alertMessage, "+5521987654321");
+        notificationService.sendNotification(promoMessage, "+5544998765432");
+    }
+}
+        </code></pre>
+    </div>
+
+</body>
+
+</html>
